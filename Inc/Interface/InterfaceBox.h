@@ -18,6 +18,8 @@ protected:
 
     int textureNum;
 
+    int renderLayer;
+
 public:
 
     InterfaceBox(RenderEngine*, int, std::string, glm::vec4, glm::vec4, float,

@@ -28,7 +28,7 @@ enum entityTYPE
 {
     ALLY,
     ENEMY,
-    OTHER
+
 };
 class TowerDefenseGame;
 
@@ -41,6 +41,7 @@ protected:
     TowerDefenseGame* theGame;
 
     entityTYPE type;
+    int entityCode;
 
     glm::vec2 pos;
     glm::vec2 previousPos;
@@ -52,6 +53,7 @@ protected:
     float defaultSpeed;
     glm::vec2 movementSpeed=glm::vec2(0.0);
     glm::vec2 movementForce=glm::vec2(0.0);
+    bool blockedSides[4];
 
     glm::vec4 color=glm::vec4(0.0);
 
@@ -66,8 +68,9 @@ protected:
     int textureNum;
 
     int affectionByTerrain;
-    int existence;
+    bool existence;
 
+    bool fightActive = false;
     std::vector<weaponInfo*> activeWeapons;
     int weaponTurn = 0;
 
@@ -78,6 +81,7 @@ protected:
     void updateMovement();
 
     void collisionDetection();
+    void environmentDetection();
 
     void useWeapon(glm::vec4, int=0);
 
@@ -86,9 +90,13 @@ protected:
     void physicsUpdate();
 
 public:
-    GameEntity(RenderEngine*, TowerDefenseGame*, std::vector<weaponInfo*>, glm::vec2, glm::vec2, int, int, int, int, float,
-             float, int,
-             int = 1, int = 1, glm::vec4 = glm::vec4(1.0));
+    GameEntity(RenderEngine*, TowerDefenseGame*, int, int, std::vector<weaponInfo*>,
+               glm::vec2, glm::vec2, glm::vec4, float, int, int, int, int,
+               int);
+
+    void calcFaceDirection(glm::vec2);
+
+    void calcWeaponDirection(int, glm::vec2);
 
     void deathEffect(glm::vec2, float,  int);
 
@@ -119,9 +127,9 @@ public:
 
     glm::vec2 getHitBox();
 
-    int getExistence();
+    bool getExistence();
 
-    int setExistence(int);
+    void setExistence(bool);
 
     glm::vec2 getFaceDirection();
 
@@ -144,6 +152,7 @@ public:
     void removeBullet(int);
 
     void setMovementSpeed(glm::vec2);
+    void addForce(glm::vec2);
 
     void setFaceDirection(glm::vec2);
 

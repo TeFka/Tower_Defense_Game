@@ -128,16 +128,16 @@ double NoiseProvider::pointPerlinNoise(double x, double y)
 void NoiseProvider::generatePerlinNoise()
 {
     this->setupNoise();
-    for(int x = 0; x<this->widthNum; x++)
+    for(int x = this->locatonOffset; x<this->widthNum+this->locatonOffset; x++)
     {
 
-        for(int y = 1; y<this->heightNum; y++)
+        for(int y = this->locatonOffset; y<this->heightNum+this->locatonOffset; y++)
         {
 
-            this->theHeightMap[x][y] = this->pointPerlinNoise(x, y);
-            if(this->maxHeight<this->theHeightMap[x][y]){
+            this->theHeightMap[x-this->locatonOffset][y-this->locatonOffset] = this->pointPerlinNoise(x, y);
+            if(this->maxHeight<this->theHeightMap[x-this->locatonOffset][y-this->locatonOffset]){
 
-                this->maxHeight = this->theHeightMap[x][y];
+                this->maxHeight = this->theHeightMap[x-this->locatonOffset][y-this->locatonOffset];
 
             }
         }
@@ -201,7 +201,7 @@ int NoiseProvider::getWidthNum()
 int NoiseProvider::getHeightNum()
 {
 
-    return this->widthNum;
+    return this->heightNum;
 
 }
 

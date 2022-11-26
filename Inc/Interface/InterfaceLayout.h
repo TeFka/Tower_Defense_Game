@@ -2,13 +2,6 @@
 #define INTERFACELAYOUT_H_INCLUDED
 
 #include "Interface/InterfaceWidget.h"
-#include "Interface/InterfaceScreen.h"
-
-enum orientation{
-
-    HORIZONTAL,
-    VERTICAL
-};
 
 class InterfaceLayout : public InterfaceWidget
 {
@@ -55,6 +48,7 @@ public:
 
     void toggleBackColor();
     void toggleBackTextColor();
+
 };
 
 #endif // INTERFACELAYOUT_H_INCLUDED

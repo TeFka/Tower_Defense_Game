@@ -20,13 +20,13 @@ public:
     TowerDefenseGameScreen(std::string, InterfaceEngine*, RenderEngine*, int);
     ~TowerDefenseGameScreen();
 
+    void customSetup();
+
     TowerDefenseGame* getGame();
     void setGame(TowerDefenseGame*);
 
     void checkForFunctions();
     void update();
-
-    void render();
 
     void printTest();
 };

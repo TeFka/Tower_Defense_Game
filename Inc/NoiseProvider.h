@@ -26,6 +26,8 @@ private:
     int heightOffset = 0;
     double roughness = 0.53;
 
+    int locatonOffset = 500;
+
 public:
     const int VALUE_NOISE = 0;
     const int PERLIN_NOISE = 1;

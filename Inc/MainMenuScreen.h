@@ -16,14 +16,21 @@ private:
     RenderEngine* renderEngine;
     TowerDefenseGame* theGame;
 
+    bool difficultyOpen;
+    bool settingsOpen;
+
+    InterfaceLayout* testPopup;
+    InterfaceBox* testLabel;
+    InterfaceButton* testButton;
+
 public:
     MainMenuScreen(std::string, InterfaceEngine*, RenderEngine*, int);
     ~MainMenuScreen();
 
+    void setGame(TowerDefenseGame*);
+    void customSetup();
     void checkForFunctions();
     void update();
-
-    void render();
 
     void printTest();
 };

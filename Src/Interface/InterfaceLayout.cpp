@@ -1,5 +1,6 @@
 
 #include "Interface/InterfaceLayout.h"
+#include "Interface/InterfaceScreen.h"
 
 InterfaceLayout::InterfaceLayout(RenderEngine* engine, int theId, orientation defaultOrientation,
                                  bool relative, float initialW, float initialH) :
@@ -21,7 +22,9 @@ void InterfaceLayout::addWidget(InterfaceWidget* newWidget)
 {
     newWidget->setParent(this);
     this->widgets.push_back(newWidget);
-    this->theActiveScreen->addWidget(newWidget);
+    if(this->assignedToScreen){
+        this->theActiveScreen->addWidget(newWidget);
+    }
 
 }
 
@@ -91,6 +94,7 @@ void InterfaceLayout::setMembersParameters()
 {
 
     float freeSpace = 1.0;
+    float addedGapSpace = 0.0;
     float positioning = 0;
     int relativeNum = 0;
     if(this->orient == HORIZONTAL)
@@ -99,16 +103,16 @@ void InterfaceLayout::setMembersParameters()
         {
             if(this->widgets[i]->isEnabled())
             {
-                this->widgets[i]->setHeightHint(1.0-this->widgets[i]->getMargin()*2);
+                this->widgets[i]->setHeightHint(1.0-this->widgets[i]->getMargin(VERTICAL)*2);
                 this->widgets[i]->setYHint(0.5);
-                if(!this->widgets[i]->isRelative())
+                if(this->widgets[i]->isRelative())
                 {
+                    relativeNum++;
 
-                    freeSpace -= this->widgets[i]->getWidthHint();
                 }
                 else
                 {
-                    relativeNum++;
+                    freeSpace -= this->widgets[i]->getWidthHint()+this->widgets[i]->getMargin(HORIZONTAL)*2;
                 }
             }
         }
@@ -119,14 +123,15 @@ void InterfaceLayout::setMembersParameters()
             {
                 if(this->widgets[i]->isRelative())
                 {
-                    this->widgets[i]->setWidthHint((freeSpace/relativeNum)-this->widgets[i]->getMargin()*2);
+                    this->widgets[i]->setWidthHint((freeSpace/relativeNum)*(1.0f-this->widgets[i]->getMargin(HORIZONTAL)*2));
                     this->widgets[i]->setXHint(positioning + ((freeSpace/relativeNum)/2));
                     positioning += (freeSpace/relativeNum);
                 }
                 else
                 {
-                    this->widgets[i]->setXHint(positioning + (this->widgets[i]->getWidthHint()/2));
-                    positioning += this->widgets[i]->getWidthHint();
+                    this->widgets[i]->setXHint(positioning + (this->widgets[i]->getWidthHint()/2) + this->widgets[i]->getMargin(HORIZONTAL));
+                    this->widgets[i]->setWidthHint(this->widgets[i]->getWidthHint());
+                    positioning += this->widgets[i]->getWidthHint() + this->widgets[i]->getMargin(HORIZONTAL)*2;
                 }
 
                 if(this->widgets[i]->isLayout())
@@ -144,15 +149,16 @@ void InterfaceLayout::setMembersParameters()
         {
             if(this->widgets[i]->isEnabled())
             {
-                this->widgets[i]->setWidthHint(1.0-this->widgets[i]->getMargin()*2);
+                this->widgets[i]->setWidthHint(1.0-this->widgets[i]->getMargin(HORIZONTAL)*2);
                 this->widgets[i]->setXHint(0.5);
-                if(!this->widgets[i]->isRelative())
+                if(this->widgets[i]->isRelative())
                 {
-                    freeSpace -= this->widgets[i]->getHeightHint();
+                    relativeNum++;
+
                 }
                 else
                 {
-                    relativeNum++;
+                    freeSpace -= this->widgets[i]->getHeightHint()+this->widgets[i]->getMargin(VERTICAL)*2;
                 }
             }
         }
@@ -163,20 +169,22 @@ void InterfaceLayout::setMembersParameters()
             {
                 if(this->widgets[i]->isRelative())
                 {
-                    this->widgets[i]->setHeightHint((freeSpace/relativeNum)-this->widgets[i]->getMargin()*2);
+                    this->widgets[i]->setHeightHint((freeSpace/relativeNum)*(1.0f-this->widgets[i]->getMargin(VERTICAL)*2));
                     this->widgets[i]->setYHint(positioning + ((freeSpace/relativeNum)/2));
                     positioning += (freeSpace/relativeNum);
                 }
                 else
                 {
-                    this->widgets[i]->setYHint(positioning + (this->widgets[i]->getHeightHint()/2));
-                    positioning += this->widgets[i]->getHeightHint();
+                    this->widgets[i]->setYHint(positioning + (this->widgets[i]->getHeightHint()/2)+this->widgets[i]->getMargin(VERTICAL));
+                    this->widgets[i]->setHeightHint(this->widgets[i]->getHeightHint());
+                    positioning += this->widgets[i]->getHeightHint()+this->widgets[i]->getMargin(VERTICAL)*2;
                 }
 
                 if(this->widgets[i]->isLayout())
                 {
                     this->widgets[i]->setMembersParameters();
                 }
+
             }
         }
 
@@ -275,4 +283,5 @@ void InterfaceLayout::toggleBackTextColor()
 
 
 }
+
 

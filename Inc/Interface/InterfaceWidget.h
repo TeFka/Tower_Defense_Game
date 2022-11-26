@@ -19,6 +19,12 @@
 
 #include "Render/RenderEngine.h"
 
+enum orientation{
+
+    HORIZONTAL,
+    VERTICAL
+};
+
 class InterfaceScreen;
 
 class InterfaceWidget{
@@ -39,7 +45,8 @@ protected:
     float realX;
     float realY;
 
-    float margin;
+    float horizontalMargin;
+    float verticalMargin;
 
     bool relativeParameters;
     bool hasParent;
@@ -50,8 +57,12 @@ protected:
     glm::vec4 color;
 
     InterfaceScreen* theActiveScreen;
+    bool assignedToScreen;
 
     InterfaceWidget* widgetParent;
+
+    glm::vec2 toggledPos;
+    bool widgetToggled;
 
 public:
 
@@ -61,6 +72,7 @@ public:
 
     void setActiveScreen(InterfaceScreen*);
     InterfaceScreen* getActiveScreen();
+
     int getId();
     bool isEnabled();
     void enable();
@@ -75,8 +87,8 @@ public:
     float getRealX();
     float getRealY();
 
-    float getMargin();
-    void setMargin(float);
+    float getMargin(orientation);
+    void setMargin(float, orientation);
 
     float getOverallWidthHint();
     float getOverallHeightHint();
@@ -96,6 +108,12 @@ public:
 
     void setRelative(bool);
     void setParent(InterfaceWidget*);
+
+    void setActiveToggledPos(glm::vec2);
+    glm::vec2 getActiveToggledPos();
+
+    bool checkToggle();
+    void setToggle(bool);
 
     void updateWidget();
 
@@ -127,6 +145,7 @@ public:
 
     virtual void setText(std::string) = 0;
     virtual std::string getText() = 0;
+
 };
 
 #endif // INTERFACEWIDGET_H_INCLUDED

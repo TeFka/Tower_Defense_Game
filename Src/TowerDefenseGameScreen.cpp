@@ -16,6 +16,13 @@ TowerDefenseGameScreen::~TowerDefenseGameScreen()
 
 }
 
+
+void TowerDefenseGameScreen::customSetup(){
+
+        this->theGame->refreshGame();
+        this->theGame->setGameState(GAME_INACTIVE);
+}
+
 TowerDefenseGame* TowerDefenseGameScreen::getGame()
 {
 
@@ -29,8 +36,6 @@ void TowerDefenseGameScreen::setGame(TowerDefenseGame* game)
 
 }
 
-
-
 void TowerDefenseGameScreen::checkForFunctions()
 {
 
@@ -39,6 +44,22 @@ void TowerDefenseGameScreen::checkForFunctions()
     {
     case 5:
         this->interfaceEngine->setActiveScreen("MainMenu");
+        this->theGame->setGameState(GAME_MENU);
+        break;
+    case 9:
+        this->theGame->chooseTower(1);
+        break;
+    case 10:
+        this->theGame->chooseTower(2);
+        break;
+    case 15:
+        this->theGame->chooseTower(3);
+        break;
+    case 102:
+        this->theGame->upgradeChosenTower();
+        break;
+    case 103:
+        this->theGame->sellChosenTower();
         break;
     }
 
@@ -46,15 +67,4 @@ void TowerDefenseGameScreen::checkForFunctions()
 void TowerDefenseGameScreen::update()
 {
     this->checkForFunctions();
-}
-
-void TowerDefenseGameScreen::render()
-{
-    this->update();
-    for(int i=0; i<this->widgets.size(); i++)
-    {
-        this->widgets[i]->render();
-
-    }
-
 }

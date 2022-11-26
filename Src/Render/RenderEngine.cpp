@@ -367,26 +367,122 @@ unsigned int RenderEngine::getMainFBO()
     return this->mFBO;
 }
 
-void RenderEngine::setBasic2DSprite(glm::vec2 pos, glm::vec2 siz, glm::vec4 color, int textN, bool relative, bool trasparent, int verticesIndex)
+void RenderEngine::setBasic2DSprite(glm::vec2 pos, glm::vec2 siz, glm::vec4 color, int textN, bool relative, bool transparent, int verticesIndex)
 {
+    int usedShader = BASIC_2D_SHADER;
+    if(transparent){
+        usedShader = BASIC_TRANSPARENT_2D_SHADER;
+    }
+
     if(relative)
     {
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y+siz.y/2)*this->windowHeight),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y-siz.y/2)*this->windowHeight),glm::vec2(0.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x/2)*this->windowWidth,(pos.y-siz.y/2)*this->windowHeight),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y+siz.y/2)*this->windowHeight),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x/2)*this->windowWidth,(pos.y-siz.y/2)*this->windowHeight),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x/2)*this->windowWidth,(pos.y+siz.y/2)*this->windowHeight),glm::vec2(1.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y+siz.y*0.5)*this->windowHeight),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y-siz.y*0.5)*this->windowHeight),glm::vec2(0.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,(pos.y-siz.y*0.5)*this->windowHeight),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x-(siz.x*0.5))*this->windowWidth,(pos.y+siz.y*0.5)*this->windowHeight),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,(pos.y-siz.y*0.5)*this->windowHeight),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,(pos.y+siz.y*0.5)*this->windowHeight),glm::vec2(1.0,1.0),color,textN}, verticesIndex);
 
     }
     else
     {
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y+siz.y/2),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y-siz.y/2),glm::vec2(0.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x/2,pos.y-siz.y/2),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y+siz.y/2),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x/2,pos.y-siz.y/2),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
-        this->shaderPrograms[BASIC_2D_SHADER]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x/2,pos.y+siz.y/2),glm::vec2(1.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y+siz.y*0.5),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y-siz.y*0.5),glm::vec2(0.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x*0.5,pos.y-siz.y*0.5),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x-(siz.x*0.5),pos.y+siz.y*0.5),glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x*0.5,pos.y-siz.y*0.5),glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{glm::vec2(pos.x+siz.x*0.5,pos.y+siz.y*0.5),glm::vec2(1.0,1.0),color,textN}, verticesIndex);
+    }
+}
+
+void RenderEngine::setTurned2DSprite(glm::vec2 pos, glm::vec2 siz, glm::vec4 color, int rotationDeg, int textN, bool relative, bool transparent, int verticesIndex){
+
+    int usedShader = BASIC_2D_SHADER;
+    if(transparent){
+        usedShader = BASIC_TRANSPARENT_2D_SHADER;
+    }
+
+    float cosXPart=0, sinXPart=0, cosYPart=0, sinYPart=0;
+    if(relative)
+    {
+        if(rotationDeg!=0){
+            cosXPart = cos(rotationDeg*M_PI/180)*(siz.x*this->windowWidth*0.5);
+            sinXPart = sin(rotationDeg*M_PI/180)*(siz.x*this->windowHeight*0.5);
+            cosYPart = cos(rotationDeg*M_PI/180)*(siz.y*this->windowWidth*0.5);
+            sinYPart = sin(rotationDeg*M_PI/180)*(siz.y*this->windowHeight*0.5);
+        }
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x-siz.x*0.5)*this->windowWidth,
+                                                              (pos.y+siz.y*0.5)*this->windowHeight) : glm::vec2(((-cosXPart+sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((cosYPart+sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x-siz.x*0.5)*this->windowWidth,
+                                                              (pos.y-siz.y*0.5)*this->windowHeight) : glm::vec2(((-cosXPart+sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((-cosYPart-sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(0.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,
+                                                              (pos.y-siz.y*0.5)*this->windowHeight) : glm::vec2(((cosXPart-sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((-cosYPart-sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x-siz.x*0.5)*this->windowWidth,
+                                                              (pos.y+siz.y*0.5)*this->windowHeight) : glm::vec2(((-cosXPart+sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((cosYPart+sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,
+                                                              (pos.y-siz.y*0.5)*this->windowHeight) : glm::vec2(((cosXPart-sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((-cosYPart-sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2((pos.x+siz.x*0.5)*this->windowWidth,
+                                                              (pos.y+siz.y*0.5)*this->windowHeight) : glm::vec2(((cosXPart-sinYPart)+pos.x*this->windowWidth),
+                                                                                                       ((cosYPart+sinXPart)+pos.y*this->windowHeight)),
+                                 glm::vec2(1.0,1.0),color,textN}, verticesIndex);
+    }
+    else
+    {
+        if(rotationDeg!=0){
+            cosXPart = cos(rotationDeg*M_PI/180)*(siz.x*0.5);
+            sinXPart = sin(rotationDeg*M_PI/180)*(siz.x*0.5);
+            cosYPart = cos(rotationDeg*M_PI/180)*(siz.y*0.5);
+            sinYPart = sin(rotationDeg*M_PI/180)*(siz.y*0.5);
+        }
+        //x′=xcos(θ)−ysin(θ),
+        //y'=xsin(θ)+ycos(θ).
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x-siz.x*0.5,
+                                                              pos.y+siz.y*0.5) : glm::vec2(((-cosXPart-sinYPart)+pos.x),
+                                                                                                       ((-sinXPart+cosYPart)+pos.y)),
+                                 glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x-siz.x*0.5,
+                                                              pos.y-siz.y*0.5) : glm::vec2(((-cosXPart+sinYPart)+pos.x),
+                                                                                                       ((-sinXPart-cosYPart)+pos.y)),
+                                 glm::vec2(0.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x+siz.x*0.5,
+                                                              pos.y-siz.y*0.5) : glm::vec2(((cosXPart+sinYPart)+pos.x),
+                                                                                                       ((sinXPart-cosYPart)+pos.y)),
+                                 glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x-siz.x*0.5,
+                                                              pos.y+siz.y*0.5) : glm::vec2(((-cosXPart-sinYPart)+pos.x),
+                                                                                                       ((-sinXPart+cosYPart)+pos.y)),
+                                 glm::vec2(0.0,1.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x+siz.x*0.5,
+                                                              pos.y-siz.y*0.5) : glm::vec2(((cosXPart+sinYPart)+pos.x),
+                                                                                                       ((sinXPart-cosYPart)+pos.y)),
+                                 glm::vec2(1.0,0.0),color,textN}, verticesIndex);
+        this->shaderPrograms[usedShader]->addVertex(basic2DVertex{
+                                 rotationDeg == 0 ? glm::vec2(pos.x+siz.x*0.5,
+                                                              pos.y+siz.y*0.5) : glm::vec2(((cosXPart-sinYPart)+pos.x),
+                                                                                                       ((sinXPart+cosYPart)+pos.y)),
+                                 glm::vec2(1.0,1.0),color,textN}, verticesIndex);
+
     }
 }
 
@@ -394,7 +490,7 @@ void RenderEngine::setBasic3DSprite(glm::vec3 pos, glm::vec3 siz, glm::vec4 colo
 {
     //positiveY
     this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x-(siz.x*0.5),
-            pos.y+siz.y/2,
+            pos.y+siz.y*0.5,
             pos.z-siz.z/2),
             glm::vec2(0.0,1.0),
             color,textN}, verticesIndex);
@@ -403,7 +499,7 @@ void RenderEngine::setBasic3DSprite(glm::vec3 pos, glm::vec3 siz, glm::vec4 colo
             pos.z+(siz.z*0.5)),
             glm::vec2(0.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(1.0,0.0),
@@ -413,12 +509,12 @@ void RenderEngine::setBasic3DSprite(glm::vec3 pos, glm::vec3 siz, glm::vec4 colo
             pos.z-(siz.z*0.5)),
             glm::vec2(0.0,1.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(1.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,1.0),
@@ -435,7 +531,7 @@ void RenderEngine::setBasic3DSprite(glm::vec3 pos, glm::vec3 siz, glm::vec4 colo
             pos.z-(siz.z*0.5)),
             glm::vec2(0.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,0.0),
@@ -445,43 +541,43 @@ void RenderEngine::setBasic3DSprite(glm::vec3 pos, glm::vec3 siz, glm::vec4 colo
             pos.z+(siz.z*0.5)),
             glm::vec2(0.0,1.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(1.0,1.0),
             color,textN}, verticesIndex);
     //positiveX
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(0.0,1.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(0.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z+(siz.z*0.5)),
             glm::vec2(0.0,1.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y-(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,0.0),
             color,textN}, verticesIndex);
-    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x/2,
+    this->shaderPrograms[BASIC_3D_SHADER]->addVertex(basic3DVertex{glm::vec3(pos.x+siz.x*0.5,
             pos.y+(siz.y*0.5),
             pos.z-(siz.z*0.5)),
             glm::vec2(1.0,1.0),

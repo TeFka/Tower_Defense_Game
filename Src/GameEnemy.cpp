@@ -1,83 +1,78 @@
 
 #include <GameEnemy.h>
 
-GameEnemy::GameEnemy(RenderEngine* engine, TowerDefenseGame* activeGame, std::vector<weaponInfo*> weaponInf, int type, glm::vec2 pos, glm::vec2 dimensions, int health, int regen, int energy, int energyRegen,
-                 float speed, float jumpForce, int textureN,
-                 int terrainEffect,int gravityEffect, glm::vec4 col,
-                 float reactionD)
-    : GameEntity(engine, activeGame, weaponInf, pos, dimensions,
-               health, regen, energy, energyRegen,speed,jumpForce, textureN,terrainEffect, gravityEffect, col)
+GameEnemy::GameEnemy(RenderEngine* engine, TowerDefenseGame* activeGame, int code, int textureN,
+                      std::vector<weaponInfo*> weaponInf, float reactionD , glm::vec2 pos, glm::vec2 siz, glm::vec4 col, float speed,
+                       int health, int regen, int energy, int energyRegen, int terrainEffect)
+    : GameEntity(engine, activeGame, code, textureN, weaponInf,
+                       pos, siz, col, speed, health, regen, energy, energyRegen,
+                       terrainEffect)
 {
     this->enemyType = type;
     this->reactionDistance=reactionD;
     this->type = ENEMY;
+    this->pathIndex = 0;
 }
 
-void GameEnemy::calcFaceDirection(glm::vec2 lookPos)
-{
-    this->faceDirection = glm::normalize(lookPos-this->pos);
+
+void GameEnemy::assignTargetPos(glm::vec2 newPos){
+
+    this->mainTargetPos = newPos;
 
 }
 
-void GameEnemy::calcWeaponDirection(int index, glm::vec2 lookPos){
+void GameEnemy::enemyAIUpdate(){
 
-    this->activeWeapons[index]->faceDirection = glm::normalize(lookPos-this->activeWeapons[index]->realPos);
-        if(this->theGame->getWeaponType(this->activeWeapons[index]->num-1)->weaponIsShown())
-        {
-            if(lookPos.x>this->activeWeapons[index]->realPos.x)
-            {
-                if(!this->activeWeapons[index]->staticPos){
-                    this->activeWeapons[index]->relativePos.x = 1.0;
+    if(!fightActive){
+        if(glm::length(this->mainTargetPos-this->pos)>0.1){
+            glm::vec2 tempTargetPos = this->theGame->getShortestPathPoint(this->pathIndex);
+            if(glm::length(tempTargetPos-this->pos)>0.1){
+                this->movementSpeed = this->defaultSpeed*glm::normalize(tempTargetPos-this->pos);
+                /*if(this->blockedSides[0]){
+                    if(this->movementSpeed.y>0){
+                        this->movementSpeed.y = -this->movementSpeed.y;
+                    }
                 }
-                if(lookPos.y<this->activeWeapons[index]->realPos.y)
-                {
-                    this->activeWeapons[index]->weaponTurn = 270 + int(90-acos((lookPos.x-this->activeWeapons[index]->realPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI);
+                if(this->blockedSides[1]){
+                    if(this->movementSpeed.x>0){
+                        this->movementSpeed.x = -this->movementSpeed.x;
+                    }
                 }
-                else
-                {
-                    this->activeWeapons[index]->weaponTurn = int(acos((lookPos.x-this->activeWeapons[index]->realPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI);
+                if(this->blockedSides[2]){
+                    if(this->movementSpeed.y<0){
+                        this->movementSpeed.y = -this->movementSpeed.y;
+                    }
                 }
+                if(this->blockedSides[3]){
+                    if(this->movementSpeed.x<0){
+                        this->movementSpeed.x = -this->movementSpeed.x;
+                    }
+                }*/
             }
-            else
-            {
-                if(!this->activeWeapons[index]->staticPos){
-                    this->activeWeapons[index]->relativePos.x = -1.0;
-                }
-
-                if(lookPos.y>this->activeWeapons[index]->realPos.y)
-                {
-                    this->activeWeapons[index]->weaponTurn = 90 + (90 - int(acos((this->activeWeapons[index]->realPos.x-lookPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI));
-                }
-                else
-                {
-                    this->activeWeapons[index]->weaponTurn = 180 + int((acos((this->activeWeapons[index]->realPos.x-lookPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI));
-                }
-
+            else{
+                this->pathIndex += 1;
             }
+
         }
+        else{
+
+        }
+    }
+    else{
+
+    }
 
 }
 
-void GameEnemy::AIaction()
-{
-
-}
-
-void GameEnemy::reactToBullets()
-{
-
-}
 
 void GameEnemy::update()
 {
-    if(this->iteration>10)
-    {
-        this->reactToBullets();
-
-        this->AIaction();
-
+    if(this->existence){
+        //std::cout<<"enemyUpdate1"<<std::endl;
+        this->enemyAIUpdate();
+        //std::cout<<"enemyUpdate2"<<std::endl;
         this->generalUpdate();
-
+        //std::cout<<"enemyUpdate3"<<std::endl;
         if(this->health<=0){
 
             if(this->enemyType>100){
@@ -87,35 +82,6 @@ void GameEnemy::update()
             }
 
         }
+        //std::cout<<"enemyUpdate4"<<std::endl;
     }
-    else
-    {
-        this->iteration++;
-    }
-}
-
-void GameEnemy::drawEnemy(glm::vec2 relativePos)
-{
-    /*
-    for(int i = 0; i<this->shotBullets.size(); i++)
-    {
-        this->renderEngine->setSprite(this->shotBullets[i]->pos+this->theGame->getMiddlePos()-relativePos,
-                                      this->shotBullets[i]->siz,this->shotBullets[i]->col,this->shotBullets[i]->textureNum);
-
-    }
-
-    this->renderEngine->setSprite(this->pos+this->theGame->getMiddlePos()-relativePos,
-                                  this->hitbox, this->color, this->textureNum, this->entityTurn);
-
-    for(int i = 0; i<this->activeWeapons.size(); i++)
-    {
-        if(this->theGame->getWeaponType(this->activeWeapons[i]->num-1)->weaponIsShown())
-        {
-            this->renderEngine->setSprite(this->activeWeapons[i]->realPos+this->theGame->getMiddlePos()-relativePos,
-                                          glm::vec2(this->activeWeapons[i]->siz.x*this->hitbox.x, this->activeWeapons[i]->siz.y*this->hitbox.y), this->color,
-                                          this->theGame->getWeaponType(this->activeWeapons[i]->num-1)->getTextureNum(),
-                                          this->activeWeapons[i]->weaponTurn);
-        }
-    }
-*/
 }

@@ -37,5 +37,6 @@ public:
 
     void setApp(AppEngine*);
     AppEngine* getApp();
+    RenderEngine* getRenderEngine();
 };
 #endif // INTERFACEENGINE_H_INCLUDED

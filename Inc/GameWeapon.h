@@ -14,13 +14,16 @@
 #include<glm/vec3.hpp>
 #include<glm/vec4.hpp>
 
+class GameEntity;
 struct Bullet
 {
     float damage;
+    glm::vec2 direction;
+    GameEntity* target;
+    bool hasTarget;
     glm::vec2 pos;
     glm::vec2 siz;
     float defaultSpeed;
-    glm::vec2 speed;
     glm::vec4 col;
     int textureNum;
     int type;

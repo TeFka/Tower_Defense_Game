@@ -46,12 +46,17 @@ public:
     void setWidth(int);
     void setHeight(int);
 
+    int getBlockType(glm::vec2);
+
     int getDataPoint(int, int);
     glm::vec2 getPosition(int, int);
 
     std::vector<std::vector<int>>& getMapData();
     std::vector<std::vector<glm::vec2>>& getMapPositions();
 
+    int getXPosIndex(float);
+
+    int getYPosIndex(float);
 
     void render();
 

@@ -166,14 +166,16 @@ void ShaderPipeline<verticeType>::removeTextureList(int verticesIndex)
 template<class verticeType>
 void ShaderPipeline<verticeType>::textureStage(int verticesIndex, bool useSubVBO)
 {
-    for(int i = 0; i<this->activeTextures[verticesIndex].size(); i++)
-    {
-        std::stringstream ms;
-        std::string mIndex;
-        ms<<i;
-        mIndex=ms.str();
-        this->theShader->set1i(this->activeTextures[verticesIndex][i]->getUnit(),("textr["+mIndex+"]").c_str());
-        this->activeTextures[verticesIndex][i]->bindT();
+    if(this->activeTextures.size()>verticesIndex){
+        for(int i = 0; i<this->activeTextures[verticesIndex].size(); i++)
+        {
+            std::stringstream ms;
+            std::string mIndex;
+            ms<<i;
+            mIndex=ms.str();
+            this->theShader->set1i(this->activeTextures[verticesIndex][i]->getUnit(),("textr["+mIndex+"]").c_str());
+            this->activeTextures[verticesIndex][i]->bindT();
+        }
     }
 
 
@@ -181,10 +183,12 @@ void ShaderPipeline<verticeType>::textureStage(int verticesIndex, bool useSubVBO
 template<class verticeType>
 void ShaderPipeline<verticeType>::endTextureStage(int verticesIndex, bool useSubVBO)
 {
-    for(int i = 0; i<this->activeTextures[verticesIndex].size(); i++)
-    {
+    if(this->activeTextures.size()>verticesIndex){
+        for(int i = 0; i<this->activeTextures[verticesIndex].size(); i++)
+        {
 
-        this->activeTextures[verticesIndex][i]->unBindT();
+            this->activeTextures[verticesIndex][i]->unBindT();
+        }
     }
 }
 
@@ -223,29 +227,31 @@ void ShaderPipeline<verticeType>::use(int verticesIndex, bool useSubVBO)
     }
     else
     {
-        this->updateVertex(verticesIndex-1);
-        this->textureStage(verticesIndex-1);
-        glBindVertexArray(this->VAO);
-        if(useSubVBO)
-        {
-            glBindBuffer(GL_ARRAY_BUFFER,this->VBO);
-            glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(verticeType)*this->vertices[verticesIndex-1].size(),this->vertices[verticesIndex-1].data());
+        if(this->vertices.size()>verticesIndex-1){
+            this->updateVertex(verticesIndex-1);
+            this->textureStage(verticesIndex-1);
+            glBindVertexArray(this->VAO);
+            if(useSubVBO)
+            {
+                glBindBuffer(GL_ARRAY_BUFFER,this->VBO);
+                glBufferSubData(GL_ARRAY_BUFFER,0,sizeof(verticeType)*this->vertices[verticesIndex-1].size(),this->vertices[verticesIndex-1].data());
+            }
+            this->theShader->use();
+
+            if(this->type == TRIANGLES)
+            {
+
+                glDrawArrays(GL_TRIANGLES,0,this->vertices[verticesIndex-1].size());
+
+            }
+            else if(this->type == POINTS)
+            {
+
+                glDrawArrays(GL_POINTS, 0, this->vertices[verticesIndex-1].size());
+
+            }
+            this->endTextureStage(verticesIndex-1);
         }
-        this->theShader->use();
-
-        if(this->type == TRIANGLES)
-        {
-
-            glDrawArrays(GL_TRIANGLES,0,this->vertices[verticesIndex-1].size());
-
-        }
-        else if(this->type == POINTS)
-        {
-
-            glDrawArrays(GL_POINTS, 0, this->vertices[verticesIndex-1].size());
-
-        }
-        this->endTextureStage(verticesIndex-1);
     }
 }
 
@@ -312,7 +318,6 @@ void ShaderPipeline<verticeType>::removePipeline(int verticesIndex)
     this->activeTextures.erase(this->activeTextures.begin()+verticesIndex);
 
 }
-
 
 template<class verticeType>
 void ShaderPipeline<verticeType>::removeVerticesList(int verticesIndex)

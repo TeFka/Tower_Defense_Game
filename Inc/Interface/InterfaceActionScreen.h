@@ -51,6 +51,7 @@ public:
 
     void toggleBackColor();
     void toggleBackTextColor();
+
 };
 
 #endif // INTERFACEACTIONSCREEN_H_INCLUDED

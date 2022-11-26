@@ -3,7 +3,9 @@
 
 #include <unordered_map>
 
-#include "./InterfaceWidget.h"
+#include "Interface/InterfaceWidget.h"
+
+#include "Interface/InterfaceLayout.h"
 
 class InterfaceEngine;
 
@@ -16,12 +18,19 @@ protected:
 
     int id;
 
+    InterfaceWidget* activeWidget;
+
+    bool widgetIsActive;
+
     std::string name;
     std::unordered_map<int, InterfaceWidget*> allWidgets;
     std::vector<InterfaceWidget*> widgets;
 
     std::vector<int> activeIds;
 
+    std::vector<InterfaceWidget*> activePopups;
+
+    glm::vec4 backgroundColor;
 public:
 
     InterfaceScreen(std::string, InterfaceEngine*, int=0);
@@ -31,20 +40,38 @@ public:
     void addActiveCommandId(int);
     int getLatestActiveId();
 
+    void handleTogglePress(float, float);
+    void handleToggleRelease();
+
     void addWidget(InterfaceWidget*);
     void addChildWidget(InterfaceWidget*);
+
+    InterfaceWidget* getActiveWidget();
+
+    void addPopup(float, float, float, float, InterfaceWidget*);
+    bool popupsAreActive();
+    InterfaceWidget* getPopupByPosition(float, float);
+    void removePopup(int);
+    void removeLastPopup();
+    void clearPopups();
 
     InterfaceWidget* getWidget(int);
     InterfaceWidget* getWidgetByPosition(float, float);
 
     std::string getName();
 
+    glm::vec4 getBackgroundColor();
+    void setBackgroundColor(glm::vec4);
+
     void setMembersParameters();
     void setup();
 
+    void render();
+
+    virtual void customSetup() = 0;
+
     virtual void update() = 0;
 
-    virtual void render() = 0;
     void renderText();
 };
 
@@ -57,8 +84,6 @@ public:
     ~DefaultInterfaceScreen();
 
     void update();
-
-    void render();
 };
 
 #endif // INTERFACESCREEN_H_INCLUDED

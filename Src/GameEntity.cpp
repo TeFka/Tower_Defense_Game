@@ -19,8 +19,53 @@ void GameEntity::generalUpdate()
     {
         this->energy+=this->energyRegeneration*this->theGame->getApp()->getDeltaTime();
     }
-
+    //std::cout<<"phys update"<<std::endl;
     this->physicsUpdate();
+
+}
+
+void GameEntity::calcFaceDirection(glm::vec2 lookPos)
+{
+    this->faceDirection = glm::normalize(lookPos-this->pos);
+
+}
+
+void GameEntity::calcWeaponDirection(int index, glm::vec2 lookPos){
+
+    this->activeWeapons[index]->faceDirection = glm::normalize(lookPos-this->activeWeapons[index]->realPos);
+        if(this->theGame->getWeaponType(this->activeWeapons[index]->num-1)->weaponIsShown())
+        {
+            if(lookPos.x>this->activeWeapons[index]->realPos.x)
+            {
+                if(!this->activeWeapons[index]->staticPos){
+                    this->activeWeapons[index]->relativePos.x = 1.0;
+                }
+                if(lookPos.y<this->activeWeapons[index]->realPos.y)
+                {
+                    this->activeWeapons[index]->weaponTurn = 270 + int(90-acos((lookPos.x-this->activeWeapons[index]->realPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI);
+                }
+                else
+                {
+                    this->activeWeapons[index]->weaponTurn = int(acos((lookPos.x-this->activeWeapons[index]->realPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI);
+                }
+            }
+            else
+            {
+                if(!this->activeWeapons[index]->staticPos){
+                    this->activeWeapons[index]->relativePos.x = -1.0;
+                }
+
+                if(lookPos.y>this->activeWeapons[index]->realPos.y)
+                {
+                    this->activeWeapons[index]->weaponTurn = 90 + (90 - int(acos((this->activeWeapons[index]->realPos.x-lookPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI));
+                }
+                else
+                {
+                    this->activeWeapons[index]->weaponTurn = 180 + int((acos((this->activeWeapons[index]->realPos.x-lookPos.x)/glm::length(lookPos-this->activeWeapons[index]->realPos))*180/M_PI));
+                }
+
+            }
+        }
 
 }
 
@@ -43,8 +88,62 @@ void GameEntity::updateMovement()
 
 void GameEntity::collisionDetection()
 {
+    //std::cout<<"collision update1"<<std::endl;
+    int currentIndexX = this->theGame->getLevelGenerator()->getXPosIndex(this->pos.x);
+    int currentIndexY = this->theGame->getLevelGenerator()->getYPosIndex(this->pos.y);
 
-    std::vector<std::vector<int>> allBlocks = this->theGame->getLevelGenerator()->getMapData();
+    int maxWidth = this->theGame->getLevelGenerator()->getWidthBlockNum();
+    int maxHeight = this->theGame->getLevelGenerator()->getWidthBlockNum();
+    //std::cout<<"collision update2"<<std::endl;
+    if(currentIndexX<maxWidth-1){
+        if(this->theGame->getLevelGenerator()->getDataPoint(currentIndexX+1, currentIndexY) == 1){
+            this->blockedSides[1] = true;
+        }
+        else{
+            this->blockedSides[1] = false;
+        }
+    }
+    else{
+        this->blockedSides[1] = true;
+    }
+    if(currentIndexX>0){
+        if(this->theGame->getLevelGenerator()->getDataPoint(currentIndexX-1, currentIndexY) == 1){
+            this->blockedSides[3] = true;
+        }
+        else{
+            this->blockedSides[3] = false;
+        }
+    }
+    else{
+        this->blockedSides[3] = true;
+    }
+    if(currentIndexY<maxHeight-1){
+        if(this->theGame->getLevelGenerator()->getDataPoint(currentIndexX, currentIndexY+1) == 1){
+            this->blockedSides[0] = true;
+        }
+        else{
+            this->blockedSides[0] = false;
+        }
+    }
+    else{
+        this->blockedSides[0] = true;
+    }
+    if(currentIndexY>0){
+        if(this->theGame->getLevelGenerator()->getDataPoint(currentIndexX, currentIndexY-1) == 1){
+            this->blockedSides[2] = true;
+        }
+        else{
+            this->blockedSides[2] = false;
+        }
+    }
+    else{
+        this->blockedSides[2] = true;
+    }
+}
+
+void GameEntity::environmentDetection(){
+
+
 
 }
 
@@ -54,27 +153,26 @@ void GameEntity::useWeapon(glm::vec4 col, int weaponIndex)
         this->energy-=this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getAttackCost();
         this->activeWeapons[weaponIndex]->attackDelay = this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getAttackDelay();
 
-        Bullet* bull = new Bullet{this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getAttackDamage(),
+        /*Bullet* bull = new Bullet{this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getAttackDamage(),
                                   this->activeWeapons[weaponIndex]->realPos,
                                   this->hitbox/10.0f,
                                   this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getBulletSpeed()*this->theGame->getGameSpeed(),
                                   (this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getBulletSpeed()*this->theGame->getGameSpeed()*this->activeWeapons[weaponIndex]->faceDirection),
-                                  col,16, this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getType()};
+                                  col,16, this->theGame->getWeaponType(this->activeWeapons[weaponIndex]->num-1)->getType()};*/
 
-        this->theGame->addBullet(bull, this->type);
     }
 }
 
 void GameEntity::physicsUpdate()
 {
-
+    //std::cout<<"phys update1"<<std::endl;
     this->updateMovement();
-
+    //std::cout<<"phys update2"<<std::endl;
     if(this->affectionByTerrain)
     {
         this->collisionDetection();
     }
-
+    //std::cout<<"phys update3"<<std::endl;
     this->previousPos = this->pos;
     this->pos+=(movementSpeed*this->theGame->getApp()->getDeltaTime()*this->theGame->getGameSpeed());
 
@@ -82,31 +180,27 @@ void GameEntity::physicsUpdate()
         this->activeWeapons[i]->realPos = this->pos+glm::vec2(this->hitbox.x*this->activeWeapons[i]->relativePos.x, this->hitbox.y*this->activeWeapons[i]->relativePos.y)/2.0f;
 
     }
+    //std::cout<<"phys update4"<<std::endl;
 }
 
-GameEntity::GameEntity(RenderEngine* engine, TowerDefenseGame* activeGame, std::vector<weaponInfo*> weaponInf,
-                       glm::vec2 pos, glm::vec2 siz, int health, int regen, int energy, int energyRegen, float speed,
-                       float jumpForceVal, int textureN,
-                       int terrainEffect, int gravityEffect, glm::vec4 col)
+GameEntity::GameEntity(RenderEngine* engine, TowerDefenseGame* activeGame, int code, int textureN, std::vector<weaponInfo*> weaponInf,
+                       glm::vec2 pos, glm::vec2 siz, glm::vec4 col, float speed, int health, int regen, int energy, int energyRegen, int terrainEffect)
 {
     this->renderEngine = engine;
     this->theGame = activeGame;
 
+    this->entityCode = code;
+
     this->activeWeapons = weaponInf;
 
-    float randm = (((float)rand())/RAND_MAX);
     this->pos=pos;
     this->previousPos = pos;
+    this->blockedSides[0] = false;
+    this->blockedSides[1] = false;
+    this->blockedSides[2] = false;
+    this->blockedSides[3] = false;
     this->entityTurn = 0;
     this->hitbox = siz;
-    if(randm<0.5)
-    {
-        this->faceDirection=glm::vec2(1.0,0.0);
-    }
-    else
-    {
-        this->faceDirection=glm::vec2(-1.0,0.0);
-    }
 
     this->healthRegeneration = regen;
     this->health=health;
@@ -142,7 +236,9 @@ void GameEntity::refreshEntity()
 
 void GameEntity::render(){
 
-    this->renderEngine->setBasic2DSprite(this->pos,this->hitbox, color, this->textureNum, false);
+    if(this->existence){
+        this->renderEngine->setTurned2DSprite(this->pos,this->hitbox, this->color, this->entityTurn, this->textureNum, false);
+    }
 }
 
 glm::vec2 GameEntity::getPos()
@@ -206,12 +302,12 @@ glm::vec2 GameEntity::getHitBox()
     return this->hitbox;
 }
 
-int GameEntity::getExistence()
+bool GameEntity::getExistence()
 {
     return this->existence;
 }
 
-int GameEntity::setExistence(int val)
+void GameEntity::setExistence(bool val)
 {
     this->existence = val;
 }
@@ -267,6 +363,12 @@ void GameEntity::setMovementSpeed(glm::vec2 newSpeed)
 {
 
     this->movementSpeed = newSpeed;
+}
+
+void GameEntity::addForce(glm::vec2 addedForce){
+
+    this->movementForce += addedForce;
+
 }
 
 void GameEntity::setHealthRegeneration(int newRegeneration)

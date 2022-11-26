@@ -182,6 +182,7 @@ public:
     TextManager* getTextManager();
 
     void setBasic2DSprite(glm::vec2, glm::vec2, glm::vec4, int = 15, bool = true, bool = false, int=0);
+    void setTurned2DSprite(glm::vec2, glm::vec2, glm::vec4, int=0, int = 15, bool = true, bool = false, int=0);
 
     void setBasic3DSprite(glm::vec3, glm::vec3, glm::vec4, int = 15, bool = false, int=0);
 

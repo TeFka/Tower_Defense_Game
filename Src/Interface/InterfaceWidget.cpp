@@ -20,7 +20,13 @@ InterfaceWidget::InterfaceWidget(RenderEngine* engine, int theId, bool relative,
     this->realWidth = initialW*this->renderEngine->getWindowWidth();
     this->realHeight = initialH*this->renderEngine->getWindowHeight();
 
-    this->margin = 0.1;
+    this->horizontalMargin = 0.005;
+    this->verticalMargin = 0.005;
+
+    this->toggledPos = glm::vec2(0.0);
+    this->widgetToggled = false;
+
+    this->assignedToScreen = false;
 }
 
 InterfaceWidget::~InterfaceWidget()
@@ -34,6 +40,7 @@ void InterfaceWidget::setActiveScreen(InterfaceScreen* newScreen)
 {
 
     this->theActiveScreen = newScreen;
+    this->assignedToScreen = true;
 }
 
 InterfaceScreen* InterfaceWidget::getActiveScreen()
@@ -115,17 +122,27 @@ float InterfaceWidget::getRealY()
 
 }
 
-float InterfaceWidget::getMargin()
+float InterfaceWidget::getMargin(orientation choice)
 {
 
-    return this->margin;
+    if(choice==HORIZONTAL){
+        return this->horizontalMargin;
+    }
+    else if(choice==VERTICAL){
+        return this->verticalMargin;
+    }
 
 }
 
-void InterfaceWidget::setMargin(float newVal)
+void InterfaceWidget::setMargin(float newVal, orientation choice)
 {
-
-    this->margin = newVal;
+    if(choice==HORIZONTAL){
+       std::cout<<"setting horizontal margin"<<std::endl;
+        this->horizontalMargin = newVal;
+    }
+    else if(choice==VERTICAL){
+        this->verticalMargin = newVal;
+    }
 
 }
 float InterfaceWidget::getOverallWidthHint()
@@ -265,4 +282,28 @@ void InterfaceWidget::setParent(InterfaceWidget* newParent)
     this->hasParent = true;
     this->widgetParent = newParent;
 
+}
+
+void InterfaceWidget::setActiveToggledPos(glm::vec2 newPos)
+{
+
+    this->toggledPos = newPos;
+}
+
+glm::vec2 InterfaceWidget::getActiveToggledPos()
+{
+
+    return this->toggledPos;
+}
+
+bool InterfaceWidget::checkToggle()
+{
+
+    return this->widgetToggled;
+}
+
+void InterfaceWidget::setToggle(bool newVal)
+{
+
+    this->widgetToggled = newVal;
 }

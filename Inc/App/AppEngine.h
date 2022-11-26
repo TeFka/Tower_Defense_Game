@@ -4,11 +4,6 @@
 #include "Render/RenderEngine.h"
 #include "Interface/InterfaceEngine.h"
 
-enum appSTATE
-{
-    APP_MENU,
-};
-
 class AppEngine{
 
 private:
@@ -17,7 +12,7 @@ private:
     InterfaceEngine* interfaceEngine;
 
     GLboolean keysProc[1024];
-    appSTATE appState = APP_MENU;
+    int latestKeyInputCode = 0;
 
     // time measuring
     float deltaTime;
@@ -26,23 +21,7 @@ private:
 
     double mouseX = 0;
     double mouseY = 0;
-
-    void writeAppText();
-
-    InterfaceWidget* activeWidget;
-
-    bool widgetIsActive;
-
-    bool activeWidgetON;
-
-    bool activeWidgetLocked;
-    float lockedMouseX;
-    float lockedMouseY;
-
-    float activeMouseMinX;
-    float activeMouseMaxX;
-    float activeMouseMinY;
-    float activeMouseMaxY;
+    bool mousePress;
 
     void updateTime();
 
@@ -56,26 +35,11 @@ public:
 
     RenderEngine* getRenderEngine();
     InterfaceEngine* getInterfaceEngine();
-    appSTATE getAppState();
-
-    bool activeWidgetIsON();
-    InterfaceWidget* getActiveWidget();
 
     float getDeltaTime();
 
     double getMouseX();
     double getMouseY();
-
-    float getActiveMouseMinX();
-    float getActiveMouseMaxX();
-    float getActiveMouseMinY();
-    float getActiveMouseMaxY();
-
-    void setAppState(appSTATE);
-
-    void setMode(int);
-
-    void lockActiveWidget(bool);
 
     void updateApp();
 

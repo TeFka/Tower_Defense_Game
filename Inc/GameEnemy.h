@@ -25,23 +25,22 @@ private:
 
     int enemyType;
     float reactionDistance;
+    glm::vec2 mainTargetPos;
+    int pathIndex;
 
     void reactToBullets();
     void AIaction();
 
 public:
 
-    GameEnemy(RenderEngine*, TowerDefenseGame*, std::vector<weaponInfo*>, int,glm::vec2, glm::vec2, int, int, int, int,
-            float, float, int,
-            int = 1,int = 1, glm::vec4 = glm::vec4(1.0),
-            float = 20.0);
+    GameEnemy(RenderEngine*, TowerDefenseGame*, int, int,
+            std::vector<weaponInfo*>, float, glm::vec2, glm::vec2, glm::vec4, float,
+            int, int, int, int,int);
 
-    void calcFaceDirection(glm::vec2);
-    void calcWeaponDirection(int, glm::vec2);
+    void assignTargetPos(glm::vec2);
+    void enemyAIUpdate();
 
     void update();
-
-    void drawEnemy(glm::vec2);
 };
 
 #endif // GameEnemy_H_INCLUDED

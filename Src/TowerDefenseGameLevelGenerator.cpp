@@ -33,6 +33,7 @@ void TowerDefenseGameLevelGenerator::createEmptyMap()
         this->mapData.push_back(tempArray);
         this->mapColors.push_back(tempCol);
         this->mapPositions.push_back(tempPos);
+
     }
 
 }
@@ -52,10 +53,9 @@ void TowerDefenseGameLevelGenerator::generateNewMap()
     {
         for(int y = 0; y<this->heightBlockNum; y++)
         {
-            std::cout<<"noise value at "<<x<<" "<<y<<" : "<<noiseData[x][y]<<std::endl;
+            //std::cout<<"noise value at "<<x<<" "<<y<<" : "<<noiseData[x][y]<<std::endl;
             if(noiseData[x][y]>0.5)
             {
-                std::cout<<"aigned value"<<std::endl;
                 this->mapData[x][y] = 0;
                 this->mapColors[x][y] = glm::vec4(0.6f,0.6f,0.0f,1.0f);
             }
@@ -102,6 +102,13 @@ void TowerDefenseGameLevelGenerator::setHeight(int newVal)
 
 }
 
+int TowerDefenseGameLevelGenerator::getBlockType(glm::vec2)
+{
+
+
+
+}
+
 int TowerDefenseGameLevelGenerator::getWidthBlockNum()
 {
 
@@ -118,10 +125,10 @@ int TowerDefenseGameLevelGenerator::getHeightBlockNum()
 void TowerDefenseGameLevelGenerator::setWidthBlockNum(int newVal)
 {
 
-    this->heightBlockNum = newVal;
+    this->widthBlockNum = newVal;
 
 }
-    void TowerDefenseGameLevelGenerator::setHeightBlockNum(int newVal)
+void TowerDefenseGameLevelGenerator::setHeightBlockNum(int newVal)
 {
 
     this->heightBlockNum = newVal;
@@ -131,7 +138,7 @@ void TowerDefenseGameLevelGenerator::setWidthBlockNum(int newVal)
 float TowerDefenseGameLevelGenerator::getBlockWidth()
 {
 
-return this->blockWidth;
+    return this->blockWidth;
 
 }
 float TowerDefenseGameLevelGenerator::getBlockHeight()
@@ -149,7 +156,7 @@ int TowerDefenseGameLevelGenerator::getDataPoint(int x, int y )
 }
 glm::vec2 TowerDefenseGameLevelGenerator::getPosition(int x, int y)
 {
-
+    //std::cout<<"map pos at index: "<<x<<" "<<y<<": "<<this->mapPositions[x][y].x<<" "<<this->mapPositions[x][y].y<<std::endl;
     return this->mapPositions[x][y];
 
 }
@@ -162,8 +169,21 @@ std::vector<std::vector<int>>& TowerDefenseGameLevelGenerator::getMapData()
 }
 std::vector<std::vector<glm::vec2>>& TowerDefenseGameLevelGenerator::getMapPositions()
 {
-
     return this->mapPositions;
+
+}
+
+int TowerDefenseGameLevelGenerator::getXPosIndex(float xPos)
+{
+
+    return (int)(xPos/this->blockWidth);
+
+}
+
+int TowerDefenseGameLevelGenerator::getYPosIndex(float yPos)
+{
+
+    return (int)(yPos/this->blockHeight);
 
 }
 
@@ -183,7 +203,7 @@ void TowerDefenseGameLevelGenerator::render()
                 {
                     if(this->mapData[x+1][y]==0)
                     {
-                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]+glm::vec2(this->blockWidth*0.2, 0.0f),
+                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]+glm::vec2(this->blockWidth*0.45, 0.0f),
                                                              glm::vec2(this->blockWidth*0.1f,this->blockHeight),
                                                              this->mapColors[x][y]*0.2f, 15, false);
                     }
@@ -192,7 +212,7 @@ void TowerDefenseGameLevelGenerator::render()
                 {
                     if(this->mapData[x-1][y]==0)
                     {
-                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]-glm::vec2(this->blockWidth*0.2, 0.0f),
+                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]-glm::vec2(this->blockWidth*0.45, 0.0f),
                                                              glm::vec2(this->blockWidth*0.1f,this->blockHeight),
                                                              this->mapColors[x][y]*0.2f, 15, false);
                     }
@@ -201,7 +221,7 @@ void TowerDefenseGameLevelGenerator::render()
                 {
                     if(this->mapData[x][y+1]==0)
                     {
-                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]+glm::vec2(0.0f, this->blockHeight*0.2),
+                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]+glm::vec2(0.0f, this->blockHeight*0.45),
                                                              glm::vec2(this->blockWidth,this->blockHeight*0.1f),
                                                              this->mapColors[x][y]*0.2f, 15, false);
                     }
@@ -210,7 +230,7 @@ void TowerDefenseGameLevelGenerator::render()
                 {
                     if(this->mapData[x][y-1]==0)
                     {
-                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]-glm::vec2(0.0f, this->blockHeight*0.2),
+                        this->renderEngine->setBasic2DSprite(this->mapPositions[x][y]-glm::vec2(0.0f, this->blockHeight*0.45),
                                                              glm::vec2(this->blockWidth,this->blockHeight*0.1f),
                                                              this->mapColors[x][y]*0.2f, 15, false);
                     }
@@ -220,7 +240,9 @@ void TowerDefenseGameLevelGenerator::render()
             {
                 for(int i = 0; i<10; i++)
                 {
-                    this->renderEngine->setBasic2DSprite(this->mapPositions[x][y] + glm::vec2((float)(std::rand()%100)/100.0f,(float)(std::rand()%100)/100.0f),
+                    float randX = (float)(std::rand()%100);
+                    float randY = (float)(std::rand()%100);
+                    this->renderEngine->setBasic2DSprite(this->mapPositions[x][y] + glm::vec2(randX,randY)/100.0f,
                                                          glm::vec2(this->blockWidth*0.1f,this->blockHeight*0.1f),
                                                          this->mapColors[x][y]*0.8f, 15, false);
                 }

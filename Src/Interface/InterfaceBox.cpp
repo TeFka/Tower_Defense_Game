@@ -130,7 +130,6 @@ void InterfaceBox::render()
     {
         if(this->hasParent)
         {
-
             this->renderEngine->setBasic2DSprite(glm::vec2(this->realX,
                                                  this->realY),
                                                  (glm::vec2(this->realWidth,
@@ -139,8 +138,9 @@ void InterfaceBox::render()
         }
         else
         {
-            this->renderEngine->setBasic2DSprite(glm::vec2(this->xHint*this->renderEngine->getWindowWidth(), this->yHint*this->renderEngine->getWindowHeight()),
-                                                 glm::vec2(this->widthHint*this->renderEngine->getWindowWidth(), this->heightHint*this->renderEngine->getWindowHeight()),
+
+            this->renderEngine->setBasic2DSprite(glm::vec2(this->xHint, this->yHint),
+                                                 glm::vec2(this->widthHint, this->heightHint),
                                                  this->color,this->textureNum, true);
         }
     }

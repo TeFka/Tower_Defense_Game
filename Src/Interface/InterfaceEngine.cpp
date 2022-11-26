@@ -39,10 +39,13 @@ void InterfaceEngine::setActiveScreen(std::string newActive){
 }
 
 void InterfaceEngine::renderActiveScreen(){
-    this->renderEngine->clearVerts(this->renderEngine->BASIC_2D_SHADER, true, 0);
-    this->renderEngine->setBasic2DSprite(glm::vec2(0.5), glm::vec2(1.0), glm::vec4(0.7));
+    this->renderEngine->clearVerts(this->renderEngine->BASIC_2D_SHADER, true, 1);
+    this->renderEngine->setBasic2DSprite(glm::vec2(0.5), glm::vec2(1.0), this->screens[this->activeScreen]->getBackgroundColor());
+    this->renderEngine->drawBasic2D(false, 1);
+
+    this->renderEngine->clearVerts(this->renderEngine->BASIC_2D_SHADER, true, 1);
     this->screens[this->activeScreen]->render();
-    this->renderEngine->drawBasic2D(false, 0);
+    this->renderEngine->drawBasic2D(false, 1);
 }
 
 void InterfaceEngine::renderActiveScreenText(){
@@ -72,4 +75,10 @@ void InterfaceEngine::setApp(AppEngine* newApp){
 AppEngine* InterfaceEngine::getApp(){
 
     return this->theApp;
+}
+
+RenderEngine* InterfaceEngine::getRenderEngine(){
+
+    return this->renderEngine;
+
 }

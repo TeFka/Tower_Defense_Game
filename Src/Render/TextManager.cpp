@@ -85,6 +85,9 @@ void TextManager::setTextType(std::string fontChoice)
             glm::vec2(fc->glyph->bitmap_left,fc->glyph->bitmap_top),
             fc->glyph->advance.x
         };
+        if(m=='g' || m=='y'|| m=='p'){
+            ch.bear.y = ch.bear.y - ch.siz.y*0.3;
+        }
         this->characters.insert(std::pair<char,Character>(m,ch));
     }
 
@@ -199,7 +202,7 @@ void TextManager::writeMessage(std::string text, GLfloat wPart, GLfloat hPart,GL
                     {
                         usedScale = usedScale-0.1f;
                     }
-
+                    usedScale = usedScale-0.1f;
                     separateStrings.push_back(tempString);
                     separateLengths.push_back(this->checkTextLength(tempString, usedScale));
                     tempString.clear();

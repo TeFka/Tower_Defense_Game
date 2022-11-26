@@ -33,16 +33,29 @@ void InterfaceActionScreen::setTexture(unsigned int textureId, int textureN)
 
 void InterfaceActionScreen::render()
 {
-
-    this->renderEngine->setBasic2DSprite(glm::vec2(this->realX,
-                                         this->realY),
-                                         (glm::vec2(this->realWidth,
-                                                 this->realHeight)*0.98f),
-                                         glm::vec4(1.0),this->textureNum, false, false, 1);
+    this->renderEngine->clearVerts(this->renderEngine->BASIC_2D_SHADER, true, 2);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX-(this->realWidth*0.5),
+                                                                                                                       this->realY+this->realHeight/2),
+                                                                                               glm::vec2(0.0,0.0),glm::vec4(1.0),this->textureNum}, 1);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX-(this->realWidth*0.5),
+                                                                                                                       this->realY-this->realHeight/2),
+                                                                                               glm::vec2(0.0,1.0),glm::vec4(1.0),this->textureNum}, 1);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX+this->realWidth/2,
+                                                                                                                       this->realY-this->realHeight/2),
+                                                                                               glm::vec2(1.0,1.0),glm::vec4(1.0),this->textureNum}, 1);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX-(this->realWidth*0.5),
+                                                                                                                       this->realY+this->realHeight/2),
+                                                                                               glm::vec2(0.0,0.0),glm::vec4(1.0),this->textureNum}, 1);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX+this->realWidth/2,
+                                                                                                                       this->realY-this->realHeight/2),
+                                                                                               glm::vec2(1.0,1.0),glm::vec4(1.0),this->textureNum}, 1);
+    this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->addVertex(basic2DVertex{glm::vec2(this->realX+this->realWidth/2,
+                                                                                                                       this->realY+this->realHeight/2),
+                                                                                               glm::vec2(1.0,0.0),glm::vec4(1.0),this->textureNum}, 1);
 
     this->renderEngine->getShaderProgram(this->renderEngine->BASIC_2D_SHADER, true)->getShader()->set1i(this->theTexture->getUnit(),"textr[0]");
     this->theTexture->bindT();
-    this->renderEngine->drawBasic2D(false, 1);
+    this->renderEngine->drawBasic2D(false, 2);
 
 }
 
@@ -143,3 +156,4 @@ void InterfaceActionScreen::toggleBackTextColor()
 
 
 }
+
